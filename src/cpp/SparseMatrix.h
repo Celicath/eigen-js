@@ -264,8 +264,7 @@ public:
 
   void add(int i, int j, const T &x)
   {
-    if (x > 1e-8 || x < -1e-8)
-      data.push_back(Eigen::Triplet<T>(i, j, x));
+    data.push_back(Eigen::Triplet<T>(i, j, x));
   }
 
   void addBlock(int i, int j, const DenseMatrix<T> &mat)

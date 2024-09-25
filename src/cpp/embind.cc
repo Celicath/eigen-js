@@ -19,6 +19,7 @@ using namespace emscripten;
 using DDM = DenseMatrix<double>;
 using CDM = DenseMatrix<complex<double>>;
 using SDM = SparseMatrix<double>;
+using CSM = SparseMatrix<complex<double>>;
 using SDMSCholesky = SimplicialCholesky<SDM, Eigen::SparseMatrix<double>>;
 
 EMSCRIPTEN_BINDINGS(Module)
@@ -144,6 +145,41 @@ EMSCRIPTEN_BINDINGS(Module)
         .function("get", &SDM::get)
         .function("set", &SDM::set)
         .function("print", &SDM::print);
+
+    // ComplexTriplet
+    class_<TripletVector<complex<double>>>("ComplexTripletVector")
+        .constructor<int>()
+        .function("add", &TripletVector<complex<double>>::add)
+        .function("addDiag", &TripletVector<complex<double>>::addDiag)
+        .function("addBlock", &TripletVector<complex<double>>::addBlock);
+
+    // Complex Sparse Matrix
+    class_<CSM>("ComplexSparseMatrix")
+        .constructor<int, int>()
+        .constructor<int, int, TripletVector<complex<double>> *>()
+        .constructor<CSM>()
+        .class_function("identity", &CSM::identity)
+        .class_function("diag", &CSM::diag)
+        .function("transpose", &CSM::transpose)
+        .function("rows", &CSM::rows)
+        .function("cols", &CSM::cols)
+        .function("nonZeros", &CSM::nonZeros)
+        .function("frobeniusNorm", &CSM::frobeniusNorm)
+        .function("block", &CSM::block)
+        .function("toDense", &CSM::toDense)
+        .function("mul", &CSM::mul)
+        .function("mulSelf", &CSM::mulSelf)
+        .function("div", &CSM::div)
+        .function("divSelf", &CSM::divSelf)
+        .function("matAdd", &CSM::matAdd, allow_raw_pointers())
+        .function("matAddSelf", &CSM::matAddSelf, allow_raw_pointers())
+        .function("matSub", &CSM::matSub, allow_raw_pointers())
+        .function("matSubSelf", &CSM::matSubSelf, allow_raw_pointers())
+        .function("matMul", &CSM::matMul, allow_raw_pointers())
+        .function("vecMul", &CSM::vecMul, allow_raw_pointers())
+        .function("get", &CSM::get)
+        .function("set", &CSM::set)
+        .function("print", &CSM::print);
 
     class_<SDMSCholesky>("SimplicialCholesky")
       .constructor<SDM>()
